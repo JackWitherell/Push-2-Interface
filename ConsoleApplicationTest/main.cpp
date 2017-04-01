@@ -31,7 +31,7 @@
 
 static libusb_device_handle* open_push2_device()
 {
-	int result;
+    int result;
 
 	if ((result = libusb_init(NULL)) < 0)
 	{
