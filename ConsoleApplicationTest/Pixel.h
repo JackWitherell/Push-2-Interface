@@ -32,23 +32,22 @@ public:
 	}
 	void setB(int b) { //takes in a value between 0 and 31, sets it to b
 		if (b >= 0 && b < 32) {
-			unsigned char temp;
-			//TODO: Not Implemented
-
+			_b &= 7;
+			_b |= b << 3;
 		}
 	}
 	void setG(int g) { //takes in a value between 0 and 63, sets it to g
 		if (g >=0 && g < 64) {
-			unsigned char tempa, tempb;
-			//TODO: Not Implemented
-			_a = tempa;
-			_b = tempb;
+			_b &= 248;
+			_b |= g >> 3;
+			_a &= 31;
+			_a |= g << 5;
 		}
 	}
 	void setR(int r) { //takes in a value between 0 and 31, sets it to r
 		if (r >=0 && r < 32) {
-			_a = (byte)r;
-			_a |= (((_a>>5) & 7)<<5); //set the first 3 bits back to green from temp
+			_a &= 224;
+			_a |= r;
 		}
 	}
 	unsigned char firstByte() { //sends byte data with red and part of green values in it

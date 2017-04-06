@@ -108,9 +108,14 @@ static void close_push2_device(libusb_device_handle* device_handle)
 }
 
 int main() {
-	
 	libusb_device_handle* device_handle=open_push2_device(); //Create Device
-	Pixel a = Pixel(31, 63, 0); //Make new pixel
+	Pixel a = Pixel(0, 0, 0); //Make new pixel
+	Pixel array[960][160];
+	for (int y = 0; y < 160; y++) {
+		for (int x = 0; x < 960; x++) {
+			array[x][y] = Pixel(y/5, 30, x/30);
+		}
+	}
 	//a.setG(0);
 
 #define PUSH2_BULK_EP_OUT 0x01
@@ -118,19 +123,23 @@ int main() {
 
 	unsigned char flipperbits[4] = { 0xFF,0xE7,0xF3,0xE7 }; //Signal Shaping Pattern
 
-	unsigned char buffer_to_be_transferred[2048]; //One line of pixels to be transferred
-
-	for (int i = 0; i < 2048; i++) {
-		//std::cout << (i / 67)<<std::endl; //debug code, prints the value that i should be on next line (0-30)
-		a.setR((i / 60));
-		if (i & 1) {
-			buffer_to_be_transferred[i] = a.secondByte() ^ flipperbits[3 - (i % 4)];
-		}
-		else {
-			buffer_to_be_transferred[i] = a.firstByte() ^ flipperbits[3 - (i % 4)];
+	unsigned char buffer_to_be_transferred[160][2048]; //One line of pixels to be transferred
+	for (int b = 0; b < 160; b++) {
+		for (int i = 0; i < 2048; i++) {
+			//std::cout << (i / 67)<<std::endl; //debug code, prints the value that i should be on next line (0-30)
+			if (i >= 1920) {
+				buffer_to_be_transferred[b][i] = 0;
+			}
+			else {
+				if (i & 1) {
+					buffer_to_be_transferred[b][i] = array[(i-1)/2][b].secondByte() ^ flipperbits[3 - (i % 4)];
+				}
+				else {
+					buffer_to_be_transferred[b][i] = array[i/2][b].firstByte() ^ flipperbits[3 - (i % 4)];
+				}
+			}
 		}
 	}
-
 	//unsigned char buffer_to_be_transferred_b[2048];
 
 	/*for (int i = 0; i < 2048; i++) {
@@ -159,6 +168,7 @@ int main() {
 	}
 	else {
 		for (int j = 0; j < 60; j++) {
+
 			libusb_bulk_transfer(
 				device_handle,
 				PUSH2_BULK_EP_OUT,
@@ -170,7 +180,7 @@ int main() {
 					libusb_bulk_transfer(
 						device_handle,
 						PUSH2_BULK_EP_OUT,
-						buffer_to_be_transferred,
+						buffer_to_be_transferred[i],
 						2048,
 						&actual_length,
 						TRANSFER_TIMEOUT);
