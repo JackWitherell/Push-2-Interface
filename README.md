@@ -1,6 +1,6 @@
 ## Push 2 Interface
 Experimental Interface for Ableton Push 2 (WIP)  
-![push2](push2.png)  
+![push2](push2.jpg)  
 
 # Inspiration
 I originally wanted to make a program that could "run Doom" on the Ableton Push 2 but quickly found the programming aspect to be way over my head. While I was unexperienced at the time of writing this, I found the documentation for this hardware to be so good that I was able to get frames outputting on the device with only a little bit of fuss and knowledge about binary manipulation. I'd say that this is the single most ambitious programming project I've attempted to work on, and I'll finish it as I get more knowledge with C++
